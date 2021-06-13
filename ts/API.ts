@@ -83,6 +83,11 @@ const updateCSS = () => {
 updateCSS();
 setInterval(updateCSS, 60e3);
 
+// ROUTE /vars.json
+app.all('/vars.json', (req, res) => {
+  res.send(data);
+});
+
 // ROUTE /vars.css
 app.all('/vars.css', (req, res) => {
   res.send(css);
