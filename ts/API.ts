@@ -93,6 +93,21 @@ app.all('/vars.css', (req, res) => {
   res.send(css);
 });
 
+// ROUTE /bd
+app.all('/bd', (req, res) => {
+  res.redirect(
+    302,
+    `https://raw.githubusercontent.com/0J3-2/AutoUserBGs/main/AutoUserBGs.theme.css`
+  );
+});
+// ROUTE /pc
+app.all('/pc', (req, res) =>
+  res.redirect(
+    302,
+    'https://github.com/0J3-2/AutoUserBGs/archive/refs/heads/main.zip'
+  )
+);
+
 // ROUTE /getBanner
 app.get('/getBanner/:id', (req, res) => {
   if (!req.params.id) {
