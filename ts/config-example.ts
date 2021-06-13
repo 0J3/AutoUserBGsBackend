@@ -1,4 +1,5 @@
-export const clientID = '3456345068734509687345';
-export const clientSecret = 'kljfcvblkjDANZSXBCOUsvdSADFASDF';
-export const port = 5500;
-export const redirect_uri = 'http://localhost:5500';
+export const clientID: string = '840826837088206849';
+export const clientSecret: string = 'kljfcvblkjDANZSXBCOUsvdSADFASDF';
+export const port: number = 5500;
+export const redirect_uri: string = 'http://localhost:5500';
+export const apiRoute: string = '/api';
