@@ -65,7 +65,7 @@ a{
 });
 
 // FUNCTION updateCSS
-let css = ``;
+let css = `@import url(https://discord-custom-covers.github.io/usrbg/dist/usrbg.css);\n`;
 const updateCSS = () => {
   let ncss = '';
   for (const key in data) {
