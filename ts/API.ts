@@ -158,7 +158,7 @@ app.post('/setUserBanner/:auth', async (req, res) => {
   const v = await setUserBanner(req.params.auth, body.url);
 
   if (v) res.send(v);
-  else res.redirect(302, 'https://aubg.nora.lgbt/success');
+  else res.redirect(302, 'https://aubg.nora.lgbt/profile/success');
 });
 
 // ROUTE /whoamireally (api/debug)
