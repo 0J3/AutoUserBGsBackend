@@ -1,6 +1,8 @@
 ///////////////////////////////////////////////////////
 /////////// Error Class ///////////////////////////////
 ///////////////////////////////////////////////////////
+
+// CLASS Error
 export default class Error {
   static fromJSON(json: {
     code: number;
@@ -41,7 +43,6 @@ export default class Error {
 ///////////////////////////////////////////////////////
 /////////// Individual Errors /////////////////////////
 ///////////////////////////////////////////////////////
-
 export const cannotUseNonHttpsProtocol = new Error(
   400,
   'Invalid Protocol',
@@ -51,4 +52,9 @@ export const cannotUseInsecureUrl = new Error(
   400,
   'Cannot use insecure image URL',
   `You cannot submit an insecure (HTTP) URL, as we refuse to submit those to any client. Try again with the HTTPS:// variant`
+);
+export const whoami_noauth = new Error(
+  400,
+  'No Auth, No WhoAmI',
+  `You cannot call /whoamireally without specifying ?auth=`
 );

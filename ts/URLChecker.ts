@@ -13,6 +13,7 @@ const domains = [
   'i.imgur.com',
 ];
 
+// FUNCTION URL isProhibited
 const isProhibited = (url: string) => {
   let v = false;
   domains.forEach(domain => {
@@ -21,6 +22,7 @@ const isProhibited = (url: string) => {
   return !v;
 };
 
+// FUNCTION URLChecker
 export default (url: string) => {
   if (!url.startsWith('http')) {
     return cannotUseNonHttpsProtocol;
