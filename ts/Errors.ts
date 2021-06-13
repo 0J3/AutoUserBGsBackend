@@ -58,3 +58,8 @@ export const whoami_noauth = new Error(
   'No Auth, No WhoAmI',
   `You cannot call /whoamireally without specifying ?auth=`
 );
+export const getbanner_noid = new Error(
+  400,
+  'No ID, no Banner',
+  `You cannot call /getbanner/:id without an id`
+);

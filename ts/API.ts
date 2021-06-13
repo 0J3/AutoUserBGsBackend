@@ -1,7 +1,20 @@
 import * as express from 'express';
 import fetch from 'node-fetch';
 import { apiRoute, clientID, clientSecret, redirect_uri } from './config';
-import { whoami_noauth } from './Errors';
+import { whoami_noauth, getbanner_noid } from './Errors';
+import * as fs from 'fs';
+import * as multer from 'multer';
+import * as expressratelimit from 'express-rate-limit';
+
+let data = {};
+const saveData = () => {
+  fs.writeFileSync('./data.json', JSON.stringify(data));
+};
+if (!fs.existsSync('./data.json')) {
+  saveData();
+} else {
+  data = JSON.parse(fs.readFileSync('./data.json').toString());
+}
 
 // POLYFILL BTOA
 const btoa = (str: string | Buffer) => {
@@ -17,6 +30,18 @@ const btoa = (str: string | Buffer) => {
 };
 
 const app = express();
+
+app.use(
+  expressratelimit({
+    windowMs: 5000,
+    max: 100,
+    message: 'The server seems to be overloaded. Please try again later',
+  })
+);
+
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(multer().array());
 
 const postRedirLocation = 'https://aubg.nora.lgbt/';
 
@@ -37,6 +62,38 @@ app.get('/styles', (req, res) => {
 a{
   color:#fff
 }`);
+});
+
+// FUNCTION updateCSS
+let css = ``;
+const updateCSS = () => {
+  let ncss = '';
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      const element = data[key];
+      ncss =
+        ncss +
+        `*[user_by_bdfdb="${key}"],*[data-user-id="${key}"]{--user-background: url(https://cdn.discordapp.com/${element.banner});}`;
+    }
+  }
+  css = ncss;
+  fs.writeFileSync('./css.css', css);
+};
+updateCSS();
+setInterval(updateCSS, 60e3);
+
+// ROUTE /vars.css
+app.all('/vars.css', (req, res) => {
+  res.send(css);
+});
+
+// ROUTE /getBanner
+app.get('/getBanner/:id', (req, res) => {
+  if (!req.params.id) {
+    res.status(404).send(getbanner_noid);
+  } else {
+    res.send({ banner: (data[req.params.id] || {}).banner || '' });
+  }
 });
 
 // ROUTE /whoami (debug)
@@ -62,20 +119,55 @@ You are <span id="User">UNKNOWN#0000</span> (ID: <span id="ID">0</span>, Avatar:
 </script>`);
 });
 
+// FUNCTION getUserData
+const getUserData = async (auth: any) => {
+  const a: { json: () => Promise<any> } = await fetch(
+    'https://discord.com/api/users/@me',
+    {
+      ['h' + 'eaders']: {
+        authorization: auth,
+      },
+    }
+  );
+
+  const d = await a.json();
+
+  return d;
+};
+
+// FUNCTION setUserBanner
+const setUserBanner = async (auth: string, banner: string) => {
+  const d = await getUserData(auth);
+
+  if (d.id) {
+    data[d.id] = data[d.id] || {};
+    data[d.id].banner = banner;
+    saveData();
+    return false;
+  } else {
+    return d;
+  }
+};
+
+// ROUTE /setUserBanner/:auth
+app.post('/setUserBanner/:auth', async (req, res) => {
+  const body = req.body;
+  if (typeof body == 'undefined') res.send('no body');
+  if (typeof body.url == 'undefined') res.send('no url');
+
+  const v = await setUserBanner(req.params.auth, body.url);
+
+  if (v) res.send(v);
+  else res.redirect(302, 'https://aubg.nora.lgbt/success');
+});
+
 // ROUTE /whoamireally (api/debug)
 app.get('/whoamireally', async ({ query }, res) => {
   if (!query.auth) {
     return res.send(whoami_noauth.toJSON());
   }
-  fetch('https://discord.com/api/users/@me', {
-    ['h' + 'eaders']: {
-      authorization: query.auth,
-    },
-  }).then((a: { json: () => Promise<any> }) =>
-    a.json().then((d: any) => {
-      res.send(d);
-    })
-  );
+
+  res.send(await getUserData(query.auth));
 });
 
 // ROUTE /RedirComplete
