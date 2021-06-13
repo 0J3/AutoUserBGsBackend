@@ -67,7 +67,8 @@ a{
 // FUNCTION updateCSS
 let css = `@import url(https://discord-custom-covers.github.io/usrbg/dist/usrbg.css);\n`;
 const updateCSS = () => {
-  let ncss = '';
+  let ncss =
+    '@import url(https://discord-custom-covers.github.io/usrbg/dist/usrbg.css);\n';
   for (const key in data) {
     if (Object.prototype.hasOwnProperty.call(data, key)) {
       const element = data[key];
