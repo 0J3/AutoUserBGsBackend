@@ -74,7 +74,7 @@ const updateCSS = () => {
       const element = data[key];
       ncss =
         ncss +
-        `*[user_by_bdfdb="${key}"],*[data-user-id="${key}"]{--user-background: url(https://cdn.discordapp.com/${element.banner});}`;
+        `*[user_by_bdfdb="${key}"],*[data-user-id="${key}"]{--user-background: url("https://cdn.discordapp.com/${element.banner}") !important;}`;
     }
   }
   css = ncss;
